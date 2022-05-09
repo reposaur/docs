@@ -1,6 +1,6 @@
 {
-  "name": "nextra",
-  "version": "1.0.0",
+  "name": "reposaur-docs",
+  "version": "0.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,6 @@
     "start": "next start",
     "build": "next build"
   },
-  "author": "Shu Ding",
   "license": "MIT",
   "dependencies": {
     "autoprefixer": "^10.4.7",
