@@ -1,11 +1,24 @@
-import Bleed from 'nextra-theme-docs/bleed'
+# Reposaur
 
-# Nextra
+**Reposaur** is a tool to audit your GitHub repositories, pull requests and
+issues against custom policies, validating they follow your organization's
+security and best practices guidelines.
 
-**Nextra** is a [Next.js](https://nextjs.org) based static site generator.
+Policies are written in the well-known Rego language and enable different
+organizations to express their specific rules and guidelines through code.
+Apart from custom policies, users can benefit from a comprehensive library of
+common rules that can be re-used or adapted to different use cases.
 
-It supports Markdown and React components ([MDX](/features/mdx)), automatically generated [sidebar and anchor links](/get-started#sidebar-and-anchor-links), file-system based routing, built-in syntax highlighting, image optimization, custom layouts, i18n, and all the features you love about Next.js.
+A simple, one-rule policy looks like this:
 
-Here's what you will get in 1 minute:
+```rego
+package repository
 
-<Bleed>![Nextra Example](../public/demo.png)</Bleed>
+violation_default_branch_not_protected {
+    github.request("/repos/{owner}/{repo}/{branch}/protection", {
+        "owner": input.owner.login,
+        "repo": input.name,
+        "branch": input.default_branch,
+    })
+}
+```
