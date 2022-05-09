@@ -26,6 +26,8 @@ violation_default_branch_not_protected {
         "repo": input.name,
         "branch": input.default_branch,
     })
+
+    resp.status != 200
 }
 ```
 
