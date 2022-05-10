@@ -3,7 +3,11 @@
 <p className="flex h-6">
   <img alt="latest-release" src="https://badgen.net/github/release/reposaur/reposaur" className="inline-block mr-2"/>
   <img alt="stars" src="https://badgen.net/github/stars/reposaur/reposaur" className="inline-block mr-2"/>
+  <img alt="contributors" src="https://badgen.net/github/contributors/reposaur/reposaur" className="inline-block mr-2"/>
   <img alt="license" src="https://badgen.net/github/license/reposaur/reposaur" className="inline-block mr-2"/>
+  <a href="https://join.slack.com/t/reposaur/shared_invite/zt-18kegr2sm-I50S~8TjnwOXITSvoa4DbA" className="inline-block mr-2">
+    <img alt="slack" src="https://badgen.net/badge/slack/%40reposaur?icon=slack" />
+  </a>
 </p>
 
 **Reposaur** is a tool to audit your GitHub repositories, pull requests and
