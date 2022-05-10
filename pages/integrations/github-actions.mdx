@@ -1,0 +1,38 @@
+# GitHub Actions
+
+Reposaur provides a simple GitHub Action to enable using the CLI in your workflows
+right away.
+
+## Example
+
+```yaml
+name: Audit PRs
+
+on:
+  pull_request: [main]
+
+jobs:
+  audit:
+    name: Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Policy Library
+        uses: actions/checkout
+        with:
+          repository: reposaur/policy
+
+      - name: Setup Reposaur
+        uses: reposaur/reposaur@main
+
+      - name: Execute Policies
+        run: |
+          echo "${{ github.event }}" \
+          | jq -r '.pull_request' \
+          | rsr exec > report.sarif
+
+      - name: Upload Report
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: report.sarif
+          category: reposaur
+```
