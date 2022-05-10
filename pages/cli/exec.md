@@ -1,4 +1,10 @@
-# `exec INPUT`
+# `exec`
+
+## Usage
+
+```bash
+rsr exec [-p POLICY_PATH...] [-n NAMESPACE] [-o OUTPUT] INPUT
+```
 
 ## Description
 

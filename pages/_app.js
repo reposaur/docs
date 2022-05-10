@@ -1,6 +1,7 @@
 import Prism from 'prism-react-renderer/prism'
 import Script from 'next/script'
 import 'nextra-theme-docs/style.css'
+
 ;(typeof global !== 'undefined' ? global : window).Prism = Prism
 
 require('prismjs/components/prism-rego')

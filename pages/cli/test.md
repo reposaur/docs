@@ -1,4 +1,10 @@
-# `test POLICY_PATH...`
+# `test`
+
+## Usage
+
+```bash
+rsr test [-o OUTPUT] POLICY_PATH...
+```
 
 ## Description
 
