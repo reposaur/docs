@@ -1,0 +1,276 @@
+import Callout from 'nextra-theme-docs/callout'
+
+# Writing your first policy
+
+## Summary
+
+This guide will walk you through writing and testing your first policy. Our goal
+will be to validate if all repositories in an organization have certain branch
+protection rules in the default branch.
+
+## The Policy
+
+Policies can be organized in multiple modules (aka files) that are grouped under
+a namespace (aka package). Each module defines or or more rules.
+
+In our case we'll start with a single module under the `repository` namespace.
+The namespace name is important as it will tell Reposaur which data can be run
+against this policy.
+
+```rego
+package repository
+```
+
+---
+
+The next step is to define a rule to fetch the default branch protection. The
+data returned by GitHub for a repository doesn't include that information so
+we'll have to do an additional request to get it. Fortunately, Reposaur provides
+a handy function to do requests to GitHub:
+
+```rego
+protection = data {
+	resp := github.request("GET /repos/{owner}/{repo}/branches/{branch}/protection", {
+		"owner": input.owner.login,
+		"repo": input.name,
+		"branch": input.default_branch,
+	})
+
+	resp.status == 200
+
+	data := resp.body
+}
+```
+
+<Callout emoji="ℹ">
+  Although the statement above is an actual rule, Reposaur will only execute it
+  if it's used in a rule prefixed with `violation_`, `fail_`, `warn_`, `note_`
+  and `info_`.
+</Callout>
+
+---
+
+The first thing we want to check is if the branch is actually protected or not.
+We can do that by simply calling the rule above and check the HTTP status code
+returned by the API. The branch has protection rules if the status code is `200`.
+
+```rego
+violation_default_branch_not_protected {
+	not protection
+}
+```
+
+---
+
+Next, we want to check the default branch has the following protections:
+
+- Require a pull request before merging
+- Require approvals
+- Require review from Code Owners
+- Require status checks to pass before merging
+- Require branches to be up to date before merging
+
+The following rules will validate each of the cases above:
+
+```rego
+violation_default_branch_pull_not_required {
+	not protection.required_pull_request_reviews
+}
+
+violation_default_branch_approvals_not_required {
+	not protection.required_pull_request_reviews.required_approving_review_count
+}
+
+violation_default_branch_approvals_not_required {
+	protection.required_pull_request_reviews.required_approving_review_count < 1
+}
+
+violation_default_branch_code_owners_reviews_not_required {
+	not protection.required_pull_request_reviews.require_code_owner_reviews
+}
+
+violation_default_branch_status_checks_not_required {
+	not protection.required_status_checks
+}
+
+violation_default_branch_up_to_date_not_required {
+	not protection.required_status_checks.strict
+}
+```
+
+---
+
+Putting it all together, our policy looks like this:
+
+```rego
+package repository
+
+protection = data {
+	resp := github.request("GET /repos/{owner}/{repo}/branches/{branch}/protection", {
+		"owner": input.owner.login,
+		"repo": input.name,
+		"branch": input.default_branch,
+	})
+
+	resp.status == 200
+
+	data := resp.body
+}
+
+violation_default_branch_not_protected {
+	not protection
+}
+
+violation_default_branch_pull_not_required {
+	not protection.required_pull_request_reviews
+}
+
+violation_default_branch_approvals_not_required {
+	not protection.required_pull_request_reviews.required_approving_review_count
+}
+
+violation_default_branch_approvals_not_required {
+	protection.required_pull_request_reviews.required_approving_review_count < 1
+}
+
+violation_default_branch_code_owners_reviews_not_required {
+	not protection.required_pull_request_reviews.require_code_owner_reviews
+}
+
+violation_default_branch_status_checks_not_required {
+	not protection.required_status_checks
+}
+
+violation_default_branch_up_to_date_not_required {
+	not protection.required_status_checks.strict
+}
+```
+
+## Unit Testing
+
+We could check if our policy works against real data but that's prone to error
+for a couple of reasons, like having to edit the branch protection rules manually
+to validate each case.
+
+To avoid the extra work and to make our solution more stable, we should instead
+create unit tests to validate our policy actually works against mocked data.
+
+A test is no more then another rule prefixed with the `test_` keyword. Here's
+how the test cases for each of our rules look like:
+
+```rego
+package repository
+
+# violation_default_branch_not_protected
+test_default_branch_protected_succeeds {
+	not violation_default_branch_not_protected with protection as {}
+}
+
+test_default_branch_not_protected_fails {
+	violation_default_branch_not_protected with protection as false
+}
+
+# violation_default_branch_pull_not_required
+test_default_branch_pull_not_required_succeeds {
+	not violation_default_branch_pull_not_required with protection as {"required_pull_request_reviews": {}}
+}
+
+test_default_branch_pull_not_required_fails {
+	violation_default_branch_pull_not_required with protection as {}
+}
+
+# violation_default_branch_approvals_not_required
+test_default_branch_approvals_not_required_succeeds {
+	not violation_default_branch_approvals_not_required with protection as {"required_pull_request_reviews": {"required_approving_review_count": 1}}
+}
+
+test_default_branch_approvals_not_required_fails {
+	violation_default_branch_approvals_not_required with protection as {"required_pull_request_reviews": {}}
+}
+
+test_default_branch_approvals_not_required_fails {
+	violation_default_branch_approvals_not_required with protection as {"required_pull_request_reviews": {"required_approving_review_count": 0}}
+}
+
+# violation_default_branch_code_owners_reviews_not_required
+test_default_branch_code_owners_reviews_not_required_succeeds {
+	not violation_default_branch_code_owners_reviews_not_required with protection as {"required_pull_request_reviews": {"require_code_owner_reviews": true}}
+}
+
+test_default_branch_code_owners_reviews_not_required_fails {
+	violation_default_branch_code_owners_reviews_not_required with protection as {"required_pull_request_reviews": {}}
+}
+
+test_default_branch_code_owners_reviews_not_required_fails {
+	violation_default_branch_code_owners_reviews_not_required with protection as {"required_pull_request_reviews": {"require_code_owner_reviews": false}}
+}
+
+# violation_default_branch_status_checks_not_required
+test_default_branch_status_checks_not_required_succeeds {
+	not violation_default_branch_status_checks_not_required with protection as {"required_status_checks": {}}
+}
+
+test_default_branch_status_checks_not_required_fails {
+	violation_default_branch_status_checks_not_required with protection as {}
+}
+
+# violation_default_branch_up_to_date_not_required
+test_default_branch_up_to_date_not_required_succeeds {
+	not violation_default_branch_up_to_date_not_required with protection as {"required_status_checks": {"strict": true}}
+}
+
+test_default_branch_up_to_date_not_required_fails {
+	violation_default_branch_up_to_date_not_required with protection as {}
+}
+
+test_default_branch_up_to_date_not_required_fails {
+	violation_default_branch_up_to_date_not_required with protection as {"required_status_checks": {}}
+}
+
+test_default_branch_up_to_date_not_required_fails {
+	violation_default_branch_up_to_date_not_required with protection as {"required_status_checks": {"strict": false}}
+}
+```
+
+---
+
+Executing the tests is as easy as running `rsr test` in the directory the
+tests and policies are:
+
+```bash
+$ rsr test
+0:00PM INF data.repository.test_default_branch_protected_succeeds: PASS (420.083µs)
+0:00PM INF data.repository.test_default_branch_not_protected_fails: PASS (55.584µs)
+0:00PM INF data.repository.test_default_branch_pull_not_required_succeeds: PASS (50.75µs)
+0:00PM INF data.repository.test_default_branch_pull_not_required_fails: PASS (45.042µs)
+0:00PM INF data.repository.test_default_branch_approvals_not_required_succeeds: PASS (124.25µs)
+0:00PM INF data.repository.test_default_branch_approvals_not_required_fails: PASS (44.959µs)
+0:00PM INF data.repository.test_default_branch_approvals_not_required_fails#01: PASS (49.125µs)
+0:00PM INF data.repository.test_default_branch_code_owners_reviews_not_required_succeeds: PASS (46.75µs)
+0:00PM INF data.repository.test_default_branch_code_owners_reviews_not_required_fails: PASS (41.958µs)
+0:00PM INF data.repository.test_default_branch_code_owners_reviews_not_required_fails#01: PASS (41.792µs)
+0:00PM INF data.repository.test_default_branch_status_checks_not_required_succeeds: PASS (37.5µs)
+0:00PM INF data.repository.test_default_branch_status_checks_not_required_fails: PASS (46.125µs)
+0:00PM INF data.repository.test_default_branch_up_to_date_not_required_succeeds: PASS (37.5µs)
+0:00PM INF data.repository.test_default_branch_up_to_date_not_required_fails: PASS (39.791µs)
+0:00PM INF data.repository.test_default_branch_up_to_date_not_required_fails#01: PASS (42.625µs)
+0:00PM INF data.repository.test_default_branch_up_to_date_not_required_fails#02: PASS (38.292µs)
+0:00PM INF done failed=0 passed=16 timeEllapsed=3.256375 total=16
+```
+
+## Executing
+
+Now that we've our policy and have guaranteed it works with unit tests, we can
+finally execute it against real world data.
+
+For example, against a single repository:
+
+```bash
+$ gh api /repos/reposaur/test | rsr exec
+```
+
+Or against all repositories in an organization:
+
+```bash
+$ gh api /orgs/reposaur | rsr exec
+```

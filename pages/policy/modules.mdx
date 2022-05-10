@@ -1,0 +1,23 @@
+import Callout from 'nextra-theme-docs/callout'
+
+# Modules
+
+<Callout emoji="ℹ">
+  This page has been partially adapted from the [Open Policy Agent - Policy
+  Language][modules] documentation. The reader is recommended to check it out
+  for more in-depth information.
+</Callout>
+
+In Rego, policies are defined inside _modules_. Modules consist of:
+
+- Exactly one [Package][packages] declaration.
+- Zero or more [Import][imports] statements.
+- Zero or more [Rule][rules] definitions.
+
+Package names are particularly important in Reposaur. See the [Namespaces](/policy/namespaces)
+section to learn more.
+
+[modules]: https://www.openpolicyagent.org/docs/latest/policy-language/#modules
+[packages]: https://www.openpolicyagent.org/docs/latest/policy-language/#packages
+[imports]: https://www.openpolicyagent.org/docs/latest/policy-language/#imports
+[rules]: https://www.openpolicyagent.org/docs/latest/policy-language/#rules

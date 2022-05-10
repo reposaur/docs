@@ -16,14 +16,14 @@ export default {
       <meta name="theme-color" content="#ffffff" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta httpEquiv="Content-Language" content="en" />
-      <meta name="description" content="Reposaur: the Next.js site builder" />
-      <meta name="og:description" content="Reposaur: the Next.js site builder" />
+      <meta name="description" content="Reposaur: Security & Compliance for GitHub" />
+      <meta name="og:description" content="Reposaur: Security & Compliance for GitHub" />
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:image" content="https://Reposaur.vercel.app/og.png" />
-      <meta name="twitter:site:domain" content="Reposaur.vercel.app" />
-      <meta name="twitter:url" content="https://Reposaur.vercel.app" />
-      <meta name="og:title" content="Reposaur: Next.js static site generator" />
-      <meta name="og:image" content="https://Reposaur.vercel.app/og.png" />
+      <meta name="twitter:image" content="https://docs.reposaur.com/og.png" />
+      <meta name="twitter:site:domain" content="docs.reposaur.com" />
+      <meta name="twitter:url" content="https://docs.reposaur.com" />
+      <meta name="og:title" content="Reposaur: Security & Compliance for GitHub" />
+      <meta name="og:image" content="https://docs.reposaur.com/og.png" />
       <meta name="apple-mobile-web-app-title" content="Reposaur" />
       <link
         rel="apple-touch-icon"
@@ -57,11 +57,7 @@ export default {
       <meta name="msapplication-TileImage" content="/ms-icon-144x144.png" />
     </>
   ),
-  search: true,
-  prevLinks: true,
-  nextLinks: true,
-  footer: true,
+  floatTOC: true,
   footerEditLink: 'Edit this page on GitHub',
-  footerText: <>MIT {new Date().getFullYear()} © Reposaur.</>,
-  unstable_faviconGlyph: '👋',
+  footerText: <>MIT {new Date().getFullYear()} © Reposaur.</>
 }

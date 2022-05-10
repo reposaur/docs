@@ -1,7 +1,9 @@
 {
   "index": "Introduction",
-  "get-started": "Get Started",
-  "features": "Features",
-  "themes": "Themes",
-  "advanced": "Advanced"
+  "installation": "Installation",
+  "guides": "Guides",
+  "cli": "Commands",
+  "policy": "Policy",
+  "contributing": "Contributing",
+  "community": "Community"
 }

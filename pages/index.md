@@ -1,5 +1,11 @@
 # Reposaur
 
+<p className="flex h-6">
+  <img alt="latest-release" src="https://badgen.net/github/release/reposaur/reposaur" className="inline-block mr-2"/>
+  <img alt="stars" src="https://badgen.net/github/stars/reposaur/reposaur" className="inline-block mr-2"/>
+  <img alt="license" src="https://badgen.net/github/license/reposaur/reposaur" className="inline-block mr-2"/>
+</p>
+
 **Reposaur** is a tool to audit your GitHub repositories, pull requests and
 issues against custom policies, validating they follow your organization's
 security and best practices guidelines.
@@ -21,13 +27,13 @@ package repository
 #  The repository default branch isn't protected meaning anyone with `write`
 #  access can commit directly to the branch.
 violation_default_branch_not_protected {
-    resp := github.request("GET /repos/{owner}/{repo}/{branch}/protection", {
-        "owner": input.owner.login,
-        "repo": input.name,
-        "branch": input.default_branch,
-    })
+	resp := github.request("GET /repos/{owner}/{repo}/{branch}/protection", {
+		"owner": input.owner.login,
+		"repo": input.name,
+		"branch": input.default_branch,
+	})
 
-    resp.status != 200
+	resp.status != 200
 }
 ```
 
