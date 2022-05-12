@@ -1,0 +1,61 @@
+# Setup Reposaur
+
+<p className="flex h-6">
+  <img alt="latest-release" src="https://badgen.net/github/release/reposaur/repo-audit-action" className="inline-block mr-2"/>
+  <img alt="stars" src="https://badgen.net/github/stars/reposaur/repo-audit-action" className="inline-block mr-2"/>
+  <img alt="contributors" src="https://badgen.net/github/contributors/reposaur/repo-audit-action" className="inline-block mr-2"/>
+  <img alt="license" src="https://badgen.net/github/license/reposaur/repo-audit-action" className="inline-block mr-2"/>
+</p>
+
+## Overview
+
+[Repository][setup-reposaur-repo] | [View on Marketplace][setup-reposaur-marketplace]
+
+This action installs the CLI in a workflow for usage in the next steps.
+
+### Usage
+
+```yaml
+- name: Setup Reposaur
+  uses: reposaur/setup-reposaur@v0.1.0
+```
+
+### Example
+
+```yaml
+name: Audit Pull
+
+on:
+  pull_request: [main]
+
+jobs:
+  audit:
+    name: Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Policy Library
+        uses: actions/checkout
+        with:
+          repository: reposaur/policy
+
+      - name: Setup Reposaur
+        uses: reposaur/setup-reposaur@main
+
+      - name: Execute Policies
+        run: |
+          echo "${{ github.event }}" \
+          | jq -r '.pull_request' \
+          | rsr exec > report.sarif
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Upload Report
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: report.sarif
+          category: reposaur
+```
+
+[setup-reposaur-repo]: https://github.com/reposaur/setup-reposaur
+[setup-reposaur-marketplace]: https://github.com/marketplace/actions/setup-reposaur
+[policy]: https://github.com/reposaur/policy
