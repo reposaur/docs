@@ -48,4 +48,5 @@ response.body.name == "reposaur"
 ```
 
 [gh-rest-api]: https://docs.github.com/en/rest
+[gh-graphql-api]: https://docs.github.com/en/graphql
 [octokit.js]: https://github.com/octokit/octokit.js
