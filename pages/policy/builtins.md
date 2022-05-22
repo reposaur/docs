@@ -1,11 +1,13 @@
 # Built-in Functions
 
-## `github.graphql`
+## GitHub
+
+### `github.graphql`
 
 Executes an HTTP request against the [GitHub GraphQL API][gh-graphql-api] and returns
 the status code and response body.
 
-### Example
+#### Example
 
 ```rego
 query := `
@@ -27,7 +29,7 @@ response.status == 200
 response.body.data.repository.name == "reposaur"
 ```
 
-## `github.request`
+### `github.request`
 
 Executes an HTTP request against the [GitHub REST API][gh-rest-api] and returns
 the status code and response body.
@@ -35,7 +37,7 @@ the status code and response body.
 Usage is similar to the [Octokit.js][octokit.js] library and most documentation examples
 can be translated 1-1 to `github.request`.
 
-### Example
+#### Example
 
 ```rego
 response := github.request("GET /repos/{owner}/{repo}", {

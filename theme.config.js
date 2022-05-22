@@ -6,7 +6,7 @@ export default {
     <>
       <span className="mr-2 font-extrabold hidden md:inline">Reposaur</span>
       <span className="text-gray-600 font-normal hidden md:inline">
-        Security & Compliance for GitHub
+        Compliance tool for development platforms
       </span>
     </>
   ),

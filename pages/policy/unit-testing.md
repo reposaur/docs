@@ -11,7 +11,7 @@ must be prefixed with `test_`.
 **./innersource.rego**
 
 ```rego
-package repository
+package github.repository
 
 note_empty_description {
 	input.description == ""
@@ -23,7 +23,7 @@ note_empty_description {
 **./innersource_test.rego**
 
 ```rego
-package repository
+package github.repository
 
 test_empty_description_should_fail {
 	note_empty_description with input.description as ""

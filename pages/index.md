@@ -1,53 +1,92 @@
-# Reposaur
+---
+title: Documentation
+---
 
-<p className="flex h-6">
-  <img alt="latest-release" src="https://badgen.net/github/release/reposaur/reposaur" className="inline-block mr-2"/>
-  <img alt="stars" src="https://badgen.net/github/stars/reposaur/reposaur" className="inline-block mr-2"/>
-  <img alt="contributors" src="https://badgen.net/github/contributors/reposaur/reposaur" className="inline-block mr-2"/>
-  <img alt="license" src="https://badgen.net/github/license/reposaur/reposaur" className="inline-block mr-2"/>
-  <a href="https://join.slack.com/t/reposaur/shared_invite/zt-18kegr2sm-I50S~8TjnwOXITSvoa4DbA" className="inline-block mr-2">
-    <img alt="slack" src="https://badgen.net/badge/slack/%40reposaur?icon=slack" />
-  </a>
-</p>
+import Callout from 'nextra-theme-docs/callout'
 
-**Reposaur** is a tool to audit your GitHub repositories, pull requests and
-issues against custom policies, validating they follow your organization's
-security and best practices guidelines.
+<div align="center" className="pt-6">
+  <img alt="logo" src="https://user-images.githubusercontent.com/8532541/169531963-bafd3cbf-dadd-486d-83cc-10a4d39c1dbc.png" />
 
-Policies are written in the well-known Rego language and enable different
-organizations to express their specific rules and guidelines through code.
-Apart from custom policies, users can benefit from a comprehensive library of
-common rules that can be re-used or adapted to different use cases.
+  # Reposaur
 
-A simple policy with a single rule looks like this:
+  <p>
+    <a href="https://goreportcard.com/report/github.com/reposaur/reposaur" className="mr-2">
+      <img alt="go-report" src="https://goreportcard.com/badge/github.com/reposaur/reposaur?style=flat-square&color=blueviolet" className="inline-block" />
+    </a>
+    <a href="https://github.com/reposaur/reposaur/blob/main/LICENSE" className="mr-2">
+      <img alt="license" src="https://img.shields.io/github/license/reposaur/reposaur?style=flat-square&color=blueviolet" className="inline-block" />
+    </a>
+    <a href="https://github.com/orgs/reposaur/discussions" className="mr-2">
+      <img alt="discussions" src="https://img.shields.io/github/discussions/reposaur/reposaur?style=flat-square&color=blueviolet" className="inline-block" />
+    </a>
+    <a href="https://slack.reposaur.com" className="mr-2">
+      <img alt="slack" src="https://img.shields.io/badge/slack-%40reposaur-blueviolet?style=flat-square" className="inline-block" />
+    </a>
+    <a href="https://twitter.com/reposaurhq" className="mr-2">
+      <img alt="twitter" src="https://img.shields.io/badge/twitter-%40reposaurhq-blueviolet?style=flat-square" className="inline-block" />
+    </a>
+  </p>
+
+  **Reposaur is the open source compliance tool for development platforms.**
+
+  Audit, verify and report on your data and configurations easily with pre-defined
+  and/or custom policies. <br /> Supports GitHub. GitLab, BitBucket and Gitea
+  support soon.
+</div>
+
+---
+
+<Callout emoji="⚠">
+  From `0.7.0` onwards, policies namespaces must be prefixed with a provider name.
+  For example, policies with the `repository` namespace are now `github.repository`.
+  This change allows new providers to be added easily without namespaces colliding.
+</Callout>
+
+### Quick Start
+
+See also our [Writing your first policy guide]() for a more in-depth walkthrough.
+
+1. Install the CLI in your machine (see [Installation](/installation) for available options)
+2. Write your first policy:
 
 ```rego
-# ./policy/repository.rego
-package repository
+# ./repository.rego
+package github.repository
+
+innersource_files := ["README.md", "CONTRIBUTING.md", "LICENSE"]
 
 # METADATA
-# title: Repository default branch is not protected
-# description: >
-#  The repository default branch isn't protected meaning anyone with `write`
-#  access can commit directly to the branch.
-violation_default_branch_not_protected {
-	resp := github.request("GET /repos/{owner}/{repo}/{branch}/protection", {
+# title: Repository is not InnerSource ready
+# description: |-
+#   InnerSource repositories (that have the `innersource` topic) must have all of
+#   these files: `README.md`, `CONTRIBUTING.md` and `LICENSE`, and at least one
+#   of them is missing.
+note_not_innersource_ready {
+	# check if repository has the innersource topic
+	input.topics[_] == "innersource"
+
+	# fetch all the root files
+	resp := github.request("GET /repos/{owner}/{repo}/contents", {
 		"owner": input.owner.login,
 		"repo": input.name,
-		"branch": input.default_branch,
 	})
 
-	resp.status != 200
+	# count how many of the files belong to the required files list
+	total_innersource_files = count([f | f := resp.body[_].name == innersource_files[_]; f])
+
+	# if the total files differs from the total required files the repository
+	# is missing some of them and is not InnerSource ready
+	total_innersource_files != count(innersource_files)
 }
+``` 
+
+3. Execute the policy against a repository:
+
+```shell
+$ gh api /repos/reposaur/test | rsr exec
 ```
 
-Using the CLI, it can be executed against a repository like:
-
-```bash
-$ gh api /repos/reposaur/reposaur | rsr exec
-```
-
-Which will result in the following SARIF report:
+The following SARIF report will be outputted:
 
 ```json
 {
@@ -61,20 +100,20 @@ Which will result in the following SARIF report:
           "name": "Reposaur",
           "rules": [
             {
-              "id": "repository/violation/default_branch_not_protected",
-              "name": "Repository default branch is not protected",
+              "id": "github.repository/note/not_innersource_ready",
+              "name": "Repository is not InnerSource ready",
               "shortDescription": {
-                "text": "Repository default branch is not protected"
+                "text": "Repository is not InnerSource ready"
               },
               "fullDescription": {
-                "text": "The repository default branch isn't protected meaning anyone with `write` access can commit directly to the branch.\n",
-                "markdown": "The repository default branch isn't protected meaning anyone with `write` access can commit directly to the branch.\n"
+                "text": "InnerSource repositories (that have the `innersource` topic) must have all of\nthese files: `README.md`, `CONTRIBUTING.md` and `LICENSE`, and at least one\nof them is missing.",
+                "markdown": "InnerSource repositories (that have the `innersource` topic) must have all of\nthese files: `README.md`, `CONTRIBUTING.md` and `LICENSE`, and at least one\nof them is missing."
               },
               "help": {
-                "markdown": "The repository default branch isn't protected meaning anyone with `write` access can commit directly to the branch.\n"
+                "markdown": "InnerSource repositories (that have the `innersource` topic) must have all of\nthese files: `README.md`, `CONTRIBUTING.md` and `LICENSE`, and at least one\nof them is missing."
               },
               "properties": {
-                "security-severity": "7"
+                "security-severity": "1"
               }
             }
           ]
@@ -82,11 +121,11 @@ Which will result in the following SARIF report:
       },
       "results": [
         {
-          "ruleId": "repository/violation/default_branch_not_protected",
+          "ruleId": "github.repository/note/not_innersource_ready",
           "ruleIndex": 0,
-          "level": "error",
+          "level": "note",
           "message": {
-            "text": "Repository default branch is not protected"
+            "text": "Repository is not InnerSource ready"
           },
           "locations": [
             {
@@ -102,18 +141,38 @@ Which will result in the following SARIF report:
       "properties": {
         "default_branch": "main",
         "owner": "reposaur",
-        "repo": "reposaur"
+        "repo": "test"
       }
     }
   ]
 }
 ```
 
-The same policy can be run against multiple repositories at once, for example:
-
-```shell
-$ gh /orgs/reposaur/repos --paginate | rsr exec
-# { ... }
-# { ... }
-# { ... }
-```
+[website]: https://reposaur.com
+[docs]: https://docs.reposaur.com
+[docs-policy]: https://docs.reposaur.com/policy
+[docs-cli]: https://docs.reposaur.com/cli/exec
+[issues]: https://github.com/reposaur/reposaur/issues
+[pulls]: https://github.com/reposaur/reposaur/pulls
+[logo]: https://user-images.githubusercontent.com/8532541/169531963-bafd3cbf-dadd-486d-83cc-10a4d39c1dbc.png
+[rego]: https://www.openpolicyagent.org/docs/latest/policy-language/
+[license]: https://github.com/reposaur/reposaur/blob/main/LICENSE
+[license-badge]: https://img.shields.io/github/license/reposaur/reposaur?style=flat-square&color=blueviolet
+[go-report]: https://goreportcard.com/report/github.com/reposaur/reposaur
+[go-report-badge]: https://goreportcard.com/badge/github.com/reposaur/reposaur?style=flat-square&color=blueviolet
+[tests-workflow]: https://github.com/reposaur/reposaur/actions/workflows/test.yml
+[tests-workflow-badge]: https://img.shields.io/github/workflow/status/reposaur/reposaur/Test?label=tests&style=flat-square
+[discussions]: https://github.com/orgs/reposaur/discussions
+[discussions-badge]: https://img.shields.io/github/discussions/reposaur/reposaur?style=flat-square&color=blueviolet
+[slack-invite]: https://slack.reposaur.com
+[slack-badge]: https://img.shields.io/badge/slack-%40reposaur-blueviolet?style=flat-square
+[twitter]: https://twitter.com/reposaurhq
+[twitter-badge]: https://img.shields.io/badge/twitter-%40reposaurhq-blueviolet?style=flat-square
+[github]: https://github.com
+[github-app]: https://docs.reposaur.com/integrations/github-app
+[github-actions]: https://docs.reposaur.com/integrations/github-actions
+[github-provider]: https://docs.reposaur.com/integrations/github-provider
+[gitlab]: https://gitlab.com
+[gitea]: https://gitea.io
+[bitbucket]: https://bitbucket.org
+[releases]: https://github.com/reposaur/reposaur/releases/latest
