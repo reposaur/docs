@@ -2,7 +2,7 @@
 
 Policies are written using the [Rego language][rego]. The language is widely used
 to create policies for different use cases such as authorization (see
-[Open Policy Agent][opa]), configuration validation (see [conftest]()) and many
+[Open Policy Agent][opa]), configuration validation (see [conftest][conftest]) and many
 others.
 
 Reposaur adopted Rego for it's simplicity, flexibility and easiness to read and
