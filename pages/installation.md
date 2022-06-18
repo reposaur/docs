@@ -20,7 +20,7 @@ $ go install github.com/reposaur/reposaur/cmd/rsr@latest
 ## Script
 
 ```bash
-$ curl -o- https://raw.githubusercontent.com/reposaur/reposaur/main/install.sh | bash
+$ curl -sfL https://get.reposaur.com | bash
 ```
 
 The script will download the latest release and put the binary at the current
