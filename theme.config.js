@@ -16,13 +16,22 @@ export default {
       <meta name="theme-color" content="#ffffff" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta httpEquiv="Content-Language" content="en" />
-      <meta name="description" content="Reposaur: Security & Compliance for GitHub" />
-      <meta name="og:description" content="Reposaur: Security & Compliance for GitHub" />
+      <meta
+        name="description"
+        content="Reposaur: Compliance tool for development platforms"
+      />
+      <meta
+        name="og:description"
+        content="Reposaur: Compliance tool for development platforms"
+      />
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:image" content="https://docs.reposaur.com/og.png" />
       <meta name="twitter:site:domain" content="docs.reposaur.com" />
       <meta name="twitter:url" content="https://docs.reposaur.com" />
-      <meta name="og:title" content="Reposaur: Security & Compliance for GitHub" />
+      <meta
+        name="og:title"
+        content="Reposaur: Compliance tool for development platforms"
+      />
       <meta name="og:image" content="https://docs.reposaur.com/og.png" />
       <meta name="apple-mobile-web-app-title" content="Reposaur" />
       <link
@@ -58,6 +67,7 @@ export default {
     </>
   ),
   floatTOC: true,
+  defaultMenuCollapsed: true,
   footerEditLink: 'Edit this page on GitHub',
-  footerText: <>MIT {new Date().getFullYear()} © Reposaur.</>
+  footerText: <>MIT {new Date().getFullYear()} © Reposaur.</>,
 }
