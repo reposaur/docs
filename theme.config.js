@@ -7,7 +7,7 @@ export default {
       <img src="/logo.png" className="mr-2" style={{ height: '58px' }} />
       <span className="mr-2 font-extrabold hidden md:inline">Reposaur</span>
       <span className="text-gray-600 font-normal hidden md:inline">
-        Security & Compliance for GitHub
+        Compliance tool for development platforms
       </span>
     </>
   ),
@@ -33,7 +33,6 @@ export default {
         name="og:title"
         content="Reposaur: Security & Compliance for GitHub"
       />
-      {/*<meta name="og:image" content="https://docs.reposaur.com/og.png" />*/}
       <meta name="apple-mobile-web-app-title" content="Reposaur" />
       <link
         rel="apple-touch-icon"
@@ -70,6 +69,7 @@ export default {
     </>
   ),
   floatTOC: true,
+  defaultMenuCollapsed: true,
   footerEditLink: 'Edit this page on GitHub',
   footerText: <>MIT {new Date().getFullYear()} © Reposaur.</>,
 }

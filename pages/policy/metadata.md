@@ -7,7 +7,7 @@ are placed immediately above a rule, inside a comment and start with the
 ## Example
 
 ```rego
-package repository
+package github.repository
 
 # METADATA
 # title: Forking is enabled

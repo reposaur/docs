@@ -3,7 +3,7 @@
 ## Usage
 
 ```bash
-rsr exec [-p POLICY_PATH...] [-n NAMESPACE] [-o OUTPUT] INPUT
+rsr exec [-p POLICY_PATH...] [-o OUTPUT] INPUT
 ```
 
 ## Description
@@ -30,7 +30,6 @@ $ rsr exec repo.json
 
 | Name              | Description                                                                |
 | ----------------- | -------------------------------------------------------------------------- |
-| `-n, --namespace` | Data namespace. Some namespaces can be auto-detected ([see more]())        |
 | `-o, --output`    | Output filename. Defaults to standard output (`-`)                         |
 | `-p, --policy`    | Path to policy files or directories. Defaults to current working directory |
 | `-t, --trace`     | Enable tracing. Defaults to `false`                                        |

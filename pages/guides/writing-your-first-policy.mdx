@@ -13,12 +13,12 @@ protection rules in the default branch.
 Policies can be organized in multiple modules (aka files) that are grouped under
 a namespace (aka package). Each module defines or or more rules.
 
-In our case we'll start with a single module under the `repository` namespace.
+In our case we'll start with a single module under the `github.repository` namespace.
 The namespace name is important as it will tell Reposaur which data can be run
 against this policy.
 
 ```rego
-package repository
+package github.repository
 ```
 
 ---
@@ -103,7 +103,7 @@ violation_default_branch_up_to_date_not_required {
 Putting it all together, our policy looks like this:
 
 ```rego
-package repository
+package github.repository
 
 protection = data {
 	resp := github.request("GET /repos/{owner}/{repo}/branches/{branch}/protection", {
@@ -159,7 +159,7 @@ A test is no more then another rule prefixed with the `test_` keyword. Here's
 how the test cases for each of our rules look like:
 
 ```rego
-package repository
+package github.repository
 
 # violation_default_branch_not_protected
 test_default_branch_protected_succeeds {
