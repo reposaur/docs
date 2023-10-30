@@ -13,7 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "autoprefixer": "^10.4.7",
-    "next": "^12.1.0",
+    "next": "^13.5.0",
     "nextra": "beta",
     "nextra-theme-docs": "beta",
     "postcss": "^8.4.13",
