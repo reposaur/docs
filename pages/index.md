@@ -7,7 +7,7 @@ import Callout from 'nextra-theme-docs/callout'
 <div align="center" className="pt-6">
   <img alt="logo" src="https://user-images.githubusercontent.com/8532541/169531963-bafd3cbf-dadd-486d-83cc-10a4d39c1dbc.png" />
 
-  # Reposaur
+# Reposaur
 
   <p>
     <a href="https://goreportcard.com/report/github.com/reposaur/reposaur" className="mr-2">
@@ -27,11 +27,12 @@ import Callout from 'nextra-theme-docs/callout'
     </a>
   </p>
 
-  **Reposaur is the open source compliance tool for development platforms.**
+**Reposaur is the open source compliance tool for development platforms.**
 
-  Audit, verify and report on your data and configurations easily with pre-defined
-  and/or custom policies. <br /> Supports GitHub. GitLab, BitBucket and Gitea
-  support soon.
+Audit, verify and report on your data and configurations easily with pre-defined
+and/or custom policies. <br /> Supports GitHub. GitLab, BitBucket and Gitea
+support soon.
+
 </div>
 
 ---
@@ -78,7 +79,7 @@ note_not_innersource_ready {
 	# is missing some of them and is not InnerSource ready
 	total_innersource_files != count(innersource_files)
 }
-``` 
+```
 
 3. Execute the policy against a repository:
 

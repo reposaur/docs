@@ -7,7 +7,8 @@
     "dev": "next",
     "start": "next start",
     "build": "next build",
-    "fmt": "prettier -w ./pages"
+    "fmt": "prettier -w ./pages",
+    "fmt:check": "prettier -c ./pages"
   },
   "license": "MIT",
   "dependencies": {

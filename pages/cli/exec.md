@@ -28,8 +28,8 @@ $ rsr exec repo.json
 
 ## Flags
 
-| Name              | Description                                                                |
-| ----------------- | -------------------------------------------------------------------------- |
-| `-o, --output`    | Output filename. Defaults to standard output (`-`)                         |
-| `-p, --policy`    | Path to policy files or directories. Defaults to current working directory |
-| `-t, --trace`     | Enable tracing. Defaults to `false`                                        |
+| Name           | Description                                                                |
+| -------------- | -------------------------------------------------------------------------- |
+| `-o, --output` | Output filename. Defaults to standard output (`-`)                         |
+| `-p, --policy` | Path to policy files or directories. Defaults to current working directory |
+| `-t, --trace`  | Enable tracing. Defaults to `false`                                        |
