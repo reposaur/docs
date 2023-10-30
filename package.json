@@ -11,7 +11,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "autoprefixer": "^10.4.7",
+    "autoprefixer": "^10.4.16",
     "next": "^12.1.0",
     "nextra": "beta",
     "nextra-theme-docs": "beta",
